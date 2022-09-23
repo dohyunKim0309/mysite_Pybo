@@ -1,0 +1,28 @@
+<!-- 필드 오류와 넌필드 오류를 출력한다. -->
+<!--
+    cf) 필드 오류와 넌필드 오류
+    필드 오류(field error):
+    넌필드 오류(nonfield error):
+-->
+
+<!-- 폼(form)에 에러가 존재할 경우 -->
+{% if form.errors %}
+<div class="alert alert-danger">
+    <!-- 1. 필드 오류 출력 -->
+    {% for field in form %}  <!-- form에 있는 모든 필드(field)에 대해 반복 -->
+    {% if field.errors %}  <!-- for1 > error가 있을 경우 -->
+    <div>
+        <strong>{{ field.label }}</strong>
+        {{ field.errors }}
+    </div>  <!-- for > if > 필드 에러 보여주기! -->
+    {% endif %}
+    {% endfor %}
+
+    <!-- 2. 넌필드 오류 출력 -->
+    {% for error in form.non_field_errors %}  <!-- form에 있는 모든 넌필드 오류에 대해 반복 -->
+    <div>
+        <strong>{{ error }}</strong>
+    </div> <!-- for2 > 넌필드 에러 보여주기! -->
+    {% endfor %}
+</div>
+{% endif %}

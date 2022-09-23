@@ -1,0 +1,170 @@
+<!--HTML base code Inheritance-->
+{% extends 'base.html' %}
+{% load pybo_filter %}
+
+<!--Main Code in Body-->
+{% block content %}
+<div class="container my-3">
+    <!-- Search & Submit question -->
+    <div class="row my-3">
+        <div class="col-6">
+            <!--  <a></a>태그로 페이지를 요청할 경우, GET 방식으로 페이지를 요청함.  -->
+            <a href="{% url 'pybo:question_create' %}" class="btn btn-primary">질문 등록하기</a>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <!-- 검색어를 넣기 위한 input. -->
+                <!--
+                    id=search_kw: 텍스트창에 입력된 값을 javascript로 읽기 위해 id 설정.
+                -->
+                <input type="text" id="search_kw" class="form-control" value="{{ kw|default_if_none:'' }}">
+
+                <!-- 검색 버튼 -->
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="btn_search">찾기</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <table class="table">
+        <!-- Head -->
+        <thead>
+        <!--
+         html table, tr, th, td 태그, table 속성
+         table ==> 데이터를 담고 있는 표를 만들기 위한 목적.
+         <table>표를 만드는 tag</table>
+            <thead>표의 head(앞부분)</thead>
+            <tbody>표의 body(중간)</tbody>
+            <tfoot>표의 foot(끝)</tfoot>
+                <th>table head의 약자로, data의 header을 만드는 역할</th>
+                <tr>table row의 약자로, 가로줄을 만드는 역할</tr>
+                <td>table data의 약자로, data가 포함된 셀을 만드는 역할</td>
+         -->
+            <tr class="text-center table-dark"> <!-- table header(항목)을 포함할 row 만들기! -->
+                <!-- table header(항목) -->
+                <th>번호</th>
+                <th style="width: 40%;">제목</th>
+                <th>글쓴이</th>
+                <th>작성일시</th>
+            </tr>
+        </thead>
+
+        <!-- Body -->
+        <tbody>
+            {% if question_list %} <!-- 질문이 존재할 경우 -->
+            {% for question in question_list %}  <!-- table의 row를 여러 개 만들기 위한 코드! -->
+            <!-- row -->
+            <tr class="text-center">  <!-- data를 넣을 row element 생성 -->
+                <!-- 1. 각 게시글에 먼저 올라온 순서대로 번호 붙이기 -->
+                <td>
+                <!-- 번호 = 전체건수 - 시작인덱스 - 현재인덱스 + 1 -->
+                {{ question_list.paginator.count|sub:question_list.start_index|sub:forloop.counter0|add:1 }}
+                </td>
+
+                <!-- 2. 질문 제목 & 링크, 답변 개수 표시 -->
+                    <!-- <td>{{ forloop.counter }}</td>
+                    forloop.counter: forloop의 시행횟수(현재 포함) ==> forloop.counter0는
+                    현재 페이지에 있는 게시물 중 첫 번째의 index, 즉 시작인덱스를 의미! -->
+                <td class="text-start">
+                    <!-- 질문 제목 & 링크 -->
+                    <a href="{% url 'pybo:detail' question.id %}" style="padding-left: 60px">{{ question.subject }}</a>
+
+                    <!-- 답변이 1개 이상 있을 경우, 답변 개수 표시(붉은색) -->
+                    {% if question.answer_set.count > 0 %}
+                    <span class="text-danger small mx-2">{{ question.answer_set.count }}</span>
+                    {% endif %}
+                </td>
+                <!-- 3. 글쓴이 표시 -->
+                <td>{{ question.author.username }}</td>
+
+                <!-- 4. 답변 올라온 시간 표시 -->
+                <td>{{ question.create_date }}</td>
+            </tr>
+            {% endfor %}
+
+            {% else %} <!-- 질문이 없을 경우 -->
+            <tr>
+                <td colspan="4">질문이 없습니다.</td>
+            </tr>
+
+            {% endif %}
+        </tbody>
+    </table>
+
+    <!-- 페이징처리 -->
+    <ul class="pagination justify-content-center">
+        <!-- 1. 처음 페이지 -->
+
+        <!-- 2. ...기호 -->
+
+        <!-- 3. 이전페이지 -->
+        <!-- 이전 페이지가 존재할 경우 ==> 활성화된 link -->
+        {% if question_list.has_previous %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ question_list.previous_page_number }}" href="javascript:void(0)">이전</a>
+        </li>
+        <!-- 이전 페이지가 존재하지 않을 경우 ==> 비활성화된 link -->
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#none">이전</a>
+        </li>
+        <!-- if Statement 종료 -->
+        {% endif %}
+
+        <!-- 4. 페이지리스트 -->
+        <!-- 현재 페이지의 모든 question에 대해 반복 -->
+        {% for page_number in question_list.paginator.page_range %}
+        {% if page_number >= question_list.number|add:-5 and page_number <= question_list.number|add:5 %}
+            <!-- 현재 question과 list 내 question이 동일할 경우: 강조표시 - class 'active' -->
+            {% if page_number == question_list.number %}
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
+            </li>
+            <!-- 현재 question과 list 내 question이 서로 다를 경우 -->
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
+            </li>
+            <!-- if statement 끝내기 -->
+            {% endif %}
+        <!-- if Statement 끝내기 -->
+        {% endif %}
+        {% endfor %}
+
+        <!-- 5. 다음페이지 -->
+        <!-- 다음 페이지가 존재할 경우 ==> 활성화된 link -->
+        {% if question_list.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ question_list.next_page_number }}">다음</a>
+        </li>
+        <!-- 다음 페이지가 존재하지 않을 경우 ==> 비활성화된 link -->
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+        </li>
+        <!-- if Statement 종료 -->
+        {% endif %}
+
+        <!-- 6. ...기호 -->
+
+
+        <!-- 7. 마지막 페이지 -->
+
+
+    </ul>
+</div>
+
+<!-- page와 kw를 동시에 GET으로 요청하기 위한 searchForm (javascript - search.js에서 요청) -->
+<!-- ==> Q. 왜 이게 필요한가? 정확한 원리는 무엇인가? - paging part 들어가서 다시 한번 공부!(paging 2회독) -->
+<form id="searchForm" method="get" action="{% url 'index' %}">
+    <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
+    <input type="hidden" id="page" name="page" value="{{ page }}">
+</form>
+
+<!-- 검색 기능 구현을 위한 javascript -->
+<script src="..\..\static\search.js"></script>
+<!-- 검색바에서 enter 누르면 검색버튼이 눌리도록 하는 javascript -->
+<script></script>
+{% endblock %}

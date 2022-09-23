@@ -1,0 +1,49 @@
+<!-- !!아직 완전히 이해못했음! -->
+
+<!-- 네비게이션바 -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <div class="container-fluid">
+        <!-- 1. Logo -->
+        <a class="navbar-brand" href="{% url 'pybo:index' %}" style="font-weight: 600;">Pybo</a>
+
+        <!-- 2. Navigation Bar Toggler -->
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- 3. 로그인/로그아웃/회원가입 링크 -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- 로그인/로그아웃 링크 -->
+                <!-- 로그인된 상황 ==> '로그아웃', 로그인 안된 상황 ==> '로그인' 뜨도록! -->
+                <li class="nav-item">
+                    <!--
+                     user.is_authenticated - 현재 사용자가 인증되었는지 여부 (로그인 true, 로그아웃 false)
+                     user.is_anonymous - is_authenticated의 반대 경우 (로그인한 false, 로그아웃 true)
+                     user.username - 사용자명 (사용자 ID)
+                     user.is_superuser - 사용자가 슈퍼유저인지 여부
+                     https://docs.djangoproject.com/en/4.0/ref/contrib/auth/
+                     -->
+                    {% if user.is_authenticated %}
+                    <a class="nav-link" href="{% url 'common:logout' %}">{{ user.username }} (로그아웃)</a>
+                    {% else %}
+                    <a class="nav-link" href="{% url 'common:login' %}">로그인</a>
+                    {% endif %}
+                </li>
+
+                <!-- 회원가입 링크 -->
+                <!-- 로그아웃되어 있을 때만 보이도록 하기 -->
+                <li>
+                    {% if not user.is_authenticated %}
+                    <a class="nav-link" href="{% url 'common:signup' %}">회원가입</a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

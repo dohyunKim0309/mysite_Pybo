@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-3">
+    <form method="post" action="{% url 'common:login' %}">
+        <!-- 1. 보안을 위한 코드 -->
+        {% csrf_token %}
+
+        <!-- 2. 로그인 성공후 이동되는 URL -->
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <!-- 3. 에러 처리를 위한 코드 -->
+        {% include "form_errors.html" %}
+
+        <!-- 4. 사용자 id 입력칸 -->
+        <div class="mb-3">
+            <!-- 레이블 '사용자ID' -->
+            <label for="username">사용자ID</label>
+            <!-- 사용자ID 받는 input: 입력이 없으면 ''이 default -->
+            <input type="text" class="form-control" name="username" id="username"
+                   value="{{ form.username.value|default_if_none:'' }}">
+        </div>
+
+        <!-- 5. 사용자 비밀번호 입력칸 -->
+        <div class="mb-3">
+            <!-- 레이블 '비밀번호' -->
+            <label for="password">비밀번호</label>
+            <!-- 비밀번호 받는 input: 입력이 없으면 ''이 default -->
+            <input type="password" class="form-control" name="password" id="password"
+                   value="{{ form.password.value|default_if_none:'' }}">
+        </div>
+
+        <!-- 6. 로그인할 때 누르는 버튼 -->
+        <button type="submit" class="btn btn-primary">로그인</button>
+    </form>
+</div>
+{% endblock %}

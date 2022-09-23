@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h5 class="my-3 border-bottom pb-2">질문등록</h5>
+    <!-- form tag에 action 속성이 지정되지 않으면, 현재 페이지가 디폴트 action으로 설정되기 때문. -->
+    <form method="post">
+        <!-- 보안을 위한 코드 -->
+        {% csrf_token %}
+
+        <!-- 오류표시 -->
+        {% include "form_errors.html" %}
+
+        <!-- 제목 -->
+        <div class="mb-3">
+            <label for="subject" class="form-label">제목</label>
+            <input type="text" class="form-control" name="subject" id="subject"
+                   value="{{ form.subject.value|default_if_none:'' }}">
+        </div>
+
+        <!-- 내용 -->
+        <div class="mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea class="form-control" name="content"
+                      id="content" rows="10">{{ form.content.value|default_if_none:'' }}</textarea>
+        </div>
+
+        <!-- 저장 버튼 -->
+        <button type="submit" class="btn btn-primary">저장하기</button>
+    </form>
+</div>
+{% endblock %}
