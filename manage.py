@@ -3,6 +3,8 @@
 import os
 import sys
 
+# 고정 ip(public) 주소 : 52.78.87.230
+# private ip 주소 : 172.26.10.165
 
 def main():
     """Run administrative tasks."""
