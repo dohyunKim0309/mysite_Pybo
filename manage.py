@@ -7,6 +7,7 @@ import sys
 # private ip 주소 : 172.26.10.165
 # token: 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
 
+
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
