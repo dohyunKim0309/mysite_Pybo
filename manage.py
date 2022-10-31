@@ -3,7 +3,7 @@
 import os
 import sys
 
-# 고정 ip(public) 주소 : 52.78.87.230
+# 고정 ip(public) 주소 : 52.78.87.230  ==> 개발할 때 사용함.
 # private ip 주소 : 172.26.10.165
 # token: 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
 
